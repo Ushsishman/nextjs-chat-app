@@ -13,6 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { auth } from "../../../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const RegisterForm = () => {
   const formSchema = z
@@ -44,8 +46,15 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMsg = error.message;
+      });
   };
 
   return (
@@ -86,13 +95,15 @@ const RegisterForm = () => {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="password">Confirm Password</FormLabel>
+              <FormLabel htmlFor="confirmPassword">
+                Confirm Password
+              </FormLabel>
               <FormControl>
                 <Input
-                  id="password"
+                  id="confirmPassword"
                   type="password"
                   placeholder="Confirm Password"
                   {...field}
