@@ -14,9 +14,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { auth } from "../../../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
+
   const formSchema = z
     .object({
       email: z
@@ -24,6 +27,10 @@ const RegisterForm = () => {
         .min(1, { message: "This field has to be filled." })
         .max(20)
         .email("This is not a valid email."),
+      userName: z
+        .string()
+        .min(3, { message: "Username should be more than 3 letter" })
+        .max(20),
       password: z
         .string()
         .min(5, { message: "Password should be longer." })
@@ -40,6 +47,7 @@ const RegisterForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      userName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -50,6 +58,11 @@ const RegisterForm = () => {
     await createUserWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
+        updateProfile(user, {
+          displayName: `${values.userName}`,
+        }).then(() => {
+          router.push("/");
+        });
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -64,6 +77,24 @@ const RegisterForm = () => {
         className="w-60 p-3 border-2 border-black rounded space-y-8">
         <FormField
           control={form.control}
+          name="userName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="userName">Username</FormLabel>
+              <FormControl>
+                <Input
+                  id="userName"
+                  type="text"
+                  placeholder="Username"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
@@ -75,6 +106,7 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -98,9 +130,7 @@ const RegisterForm = () => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="confirmPassword">
-                Confirm Password
-              </FormLabel>
+              <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
               <FormControl>
                 <Input
                   id="confirmPassword"

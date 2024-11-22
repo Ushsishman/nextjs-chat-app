@@ -15,8 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { auth } from "../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
+  const router = useRouter();
+
   const formSchema = z.object({
     email: z
       .string()
@@ -41,7 +44,7 @@ const LoginForm = () => {
     await signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log("You logged in!");
+        router.refresh();
       })
       .catch((error) => {
         const errorCode = error.code;
