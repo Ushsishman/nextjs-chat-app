@@ -22,7 +22,7 @@ export default function Home() {
       <div>
         {userLoggedIn === true ? (
           <div>
-            Hello {currentUser.email}
+            Hello {currentUser?.email}
             <Button onClick={signOutUser}>Sign out</Button>
           </div>
         ) : (

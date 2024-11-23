@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useContext, useState, useEffect, createContext } from "react";
-import { auth } from "../../../firebaseConfig";
+import { auth, db } from "../../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext<any>(null);
 
@@ -11,22 +12,30 @@ const useAuth = () => {
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isEmailUser, setIsEmailUser] = useState(false);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [reRender, setRerender] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, initializeUser);
-
+ 
     return unsubscribe;
-  }, []);
+  }, [reRender]);
 
   async function initializeUser(user: any) {
     if (user) {
-      setCurrentUser({ ...user });
-      setUserLoggedIn(true);
+      const userRef = doc(db, "users", user.uid);
+      const userSnapshot = await getDoc(userRef);
+
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        setCurrentUser(userData);
+        setUserLoggedIn(true);
+        setRerender(false);
+      }
     } else {
       setCurrentUser(null);
       setUserLoggedIn(false);
@@ -37,6 +46,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value: any = {
     userLoggedIn,
     currentUser,
+    setRerender,
   };
 
   return (

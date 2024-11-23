@@ -13,13 +13,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { auth } from "../../../firebaseConfig";
+import { auth, db } from "../../../firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authContext";
 
 const RegisterForm = () => {
   const router = useRouter();
-
+  const { setRerender } = useAuth();
   const formSchema = z
     .object({
       email: z
@@ -60,8 +62,20 @@ const RegisterForm = () => {
         const user = userCredential.user;
         updateProfile(user, {
           displayName: `${values.userName}`,
-        }).then(() => {
-          router.push("/");
+        }).then(async () => {
+          const userRef = doc(db, "users", user.uid);
+          const userSnapshot = await getDoc(userRef);
+
+          if (!userSnapshot.exists()) {
+            await setDoc(userRef, {
+              uid: user.uid,
+              email: user.email,
+              userName: user.displayName,
+            }).then(() => {
+              setRerender(true);
+              router.push("/");
+            });
+          }
         });
       })
       .catch((error) => {
