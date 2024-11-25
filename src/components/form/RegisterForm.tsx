@@ -18,10 +18,13 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/authContext";
+import { useToast } from "@/hooks/use-toast";
 
 const RegisterForm = () => {
   const router = useRouter();
   const { setRerender } = useAuth();
+  const { toast } = useToast();
+
   const formSchema = z
     .object({
       email: z
@@ -73,6 +76,11 @@ const RegisterForm = () => {
               userName: user.displayName,
             }).then(() => {
               setRerender(true);
+              toast({
+                title: "Success",
+                description: `Your account has been created successfully, ${user.displayName}! Welcome aboard! You can now log in and start exploring.`,
+                variant: "default",
+              });
               router.push("/");
             });
           }
@@ -80,7 +88,19 @@ const RegisterForm = () => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMsg = error.message;
+        if (errorCode == "auth/email-already-in-use") {
+          toast({
+            title: "Error",
+            description: "This email address is already in use.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "An error occured. Please try again.",
+            variant: "destructive",
+          });
+        }
       });
   };
 
@@ -97,6 +117,7 @@ const RegisterForm = () => {
               <FormLabel htmlFor="userName">Username</FormLabel>
               <FormControl>
                 <Input
+                  className="border-black"
                   id="userName"
                   type="text"
                   placeholder="Username"
@@ -114,7 +135,13 @@ const RegisterForm = () => {
             <FormItem>
               <FormLabel htmlFor="email">Email</FormLabel>
               <FormControl>
-                <Input id="email" type="email" placeholder="Email" {...field} />
+                <Input
+                  className="border-black"
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,6 +156,7 @@ const RegisterForm = () => {
               <FormLabel htmlFor="password">Password</FormLabel>
               <FormControl>
                 <Input
+                  className="border-black"
                   id="password"
                   type="password"
                   placeholder="Password"
@@ -147,6 +175,7 @@ const RegisterForm = () => {
               <FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
               <FormControl>
                 <Input
+                  className="border-black"
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirm Password"
@@ -157,7 +186,7 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <Button variant="outline" type="submit">
+        <Button variant="default" type="submit">
           Submit
         </Button>
       </form>

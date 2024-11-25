@@ -16,9 +16,12 @@ import { Input } from "@/components/ui/input";
 import { auth } from "../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 const LoginForm = () => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const formSchema = z.object({
     email: z
@@ -44,11 +47,29 @@ const LoginForm = () => {
     await signInWithEmailAndPassword(auth, values.email, values.password)
       .then((userCredential) => {
         const user = userCredential.user;
+        toast({
+          title: "Success",
+          description: `You have successfully logged in, ${user.displayName}. Welcome back!`,
+          variant: "default",
+        });
         router.refresh();
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
+        if (errorCode == "auth/invalid-credential") {
+          toast({
+            title: "Error",
+            description:
+              "The email or password you entered is incorrect. Please try again.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "An error occured. Please try again.",
+            variant: "destructive",
+          });
+        }
       });
   };
 
@@ -64,7 +85,13 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel htmlFor="email">Email</FormLabel>
               <FormControl>
-                <Input id="email" type="email" placeholder="Email" {...field} />
+                <Input
+                  className="border-black"
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,6 +105,7 @@ const LoginForm = () => {
               <FormLabel htmlFor="password">Password</FormLabel>
               <FormControl>
                 <Input
+                  className="border-black"
                   id="password"
                   type="password"
                   placeholder="Password"
@@ -88,7 +116,12 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button variant="outline" type="submit">
+        <Link href="/register">
+          <p className="hover:underline text-sm mt-2">
+            Don't have an account? Sign Up
+          </p>
+        </Link>
+        <Button variant="default" type="submit">
           Submit
         </Button>
       </form>
