@@ -74,6 +74,7 @@ const RegisterForm = () => {
               uid: user.uid,
               email: user.email,
               userName: user.displayName,
+              photoURL: user.photoURL,
             }).then(() => {
               setRerender(true);
               toast({
