@@ -6,7 +6,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "../../../firebaseConfig";
 import { LogOut } from "lucide-react";
-import User from "./User";
+import User from "../User/User";
 
 const SidebarHeader = () => {
   const router = useRouter();

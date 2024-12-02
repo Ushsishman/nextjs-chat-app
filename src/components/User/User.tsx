@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { FaCircleUser } from "react-icons/fa6";
+import { UserData } from "@/interfaces/user";
 
-const User = ({ user }: any) => {
+const User = ({ user }: { user: UserData }) => {
   return (
     <div className="p-2 pr-3 flex flex-row items-center rounded-full hover:bg-[#F2E2CE] hover:text-[#735645] cursor-pointer">
       <div className="mr-2">

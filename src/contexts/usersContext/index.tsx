@@ -3,6 +3,7 @@
 import React, { useContext, useState, useEffect, createContext } from "react";
 import { db } from "../../../firebaseConfig";
 import { collection, query, onSnapshot } from "firebase/firestore";
+import { UserData } from "@/interfaces/user";
 
 const UsersContext = createContext<any>(null);
 
@@ -12,6 +13,7 @@ const useUsers = () => {
 
 const UsersProvider = ({ children }: { children: React.ReactNode }) => {
   const [allUsers, setAllUsers] = useState<object[]>([]);
+  const [clickedUser, setClickedUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     const q = query(collection(db, "users"));
@@ -34,6 +36,8 @@ const UsersProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value: any = {
     allUsers,
+    clickedUser,
+    setClickedUser,
   };
 
   return (
