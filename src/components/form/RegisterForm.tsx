@@ -79,7 +79,7 @@ const RegisterForm = () => {
               setRerender(true);
               toast({
                 title: "Success",
-                description: `Your account has been created successfully, ${user.displayName}! Welcome aboard! You can now log in and start exploring.`,
+                description: `Your account has been created successfully, ${user.displayName}! Welcome aboard! You can now start exploring.`,
                 variant: "default",
               });
               router.push("/");
