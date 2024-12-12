@@ -5,15 +5,15 @@ import { IoMdSend } from "react-icons/io";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useUsers } from "@/contexts/usersContext";
+import { useData } from "@/contexts/dataContext";
 import { useAuth } from "@/contexts/authContext";
-import { sendMessageToRoom } from "@/utils/utils";
+import { sendMessageToRoom, sendMessageToGroupRoom } from "@/utils/utils";
 
 const ChatInput = () => {
   const [message, setMessage] = useState<string>("");
 
   const { toast } = useToast();
-  const { clickedUser } = useUsers();
+  const { clickedUser, currentChat, clickedRoom } = useData();
   const { currentUser } = useAuth();
 
   const handleMessage = (message: string) => {
@@ -28,7 +28,12 @@ const ChatInput = () => {
       });
     } else {
       let normalizedMessage = trimmedMessage.replace(/\s+/g, " ").trim();
-      sendMessageToRoom(currentUser, clickedUser, normalizedMessage);
+      if (currentChat === "userChat") {
+        sendMessageToRoom(currentUser, clickedUser, normalizedMessage);
+      }
+      if (currentChat === "groupChat") {
+        sendMessageToGroupRoom(currentUser, clickedRoom, normalizedMessage);
+      }
     }
 
     setMessage("");

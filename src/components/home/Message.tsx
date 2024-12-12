@@ -25,6 +25,7 @@ const Message = ({ message }: { message: MessageData }) => {
             ? "bg-[#D99559] rounded-lg"
             : "bg-[#735645] rounded-lg",
         )}>
+        <p className="text-lg">{message.senderName}:</p>
         <p className="text-lg">{message.content}</p>
         <p
           className={clsx(
