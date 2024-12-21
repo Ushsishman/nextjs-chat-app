@@ -16,7 +16,9 @@ import { useState } from "react";
 
 const ChatInput = () => {
   const [file, setFile] = useState<File | null>(null);
-
+  const [mediaFormat, setMediaFormat] = useState<"png" | "jpg" | "mp4" | null>(
+    null,
+  );
   const { toast } = useToast();
   const { clickedUser, currentChat, clickedRoom } = useData();
   const { currentUser } = useAuth();
@@ -48,10 +50,16 @@ const ChatInput = () => {
       let normalizedMessage = trimmedMessage.replace(/\s+/g, " ").trim();
 
       if (currentChat === "userChat") {
-        sendMessageToRoom(currentUser, clickedUser, normalizedMessage);
+        sendMessageToRoom(currentUser, clickedUser, normalizedMessage, file, mediaFormat);
       }
       if (currentChat === "groupChat") {
-        sendMessageToGroupRoom(currentUser, clickedRoom, normalizedMessage);
+        sendMessageToGroupRoom(
+          currentUser,
+          clickedRoom,
+          normalizedMessage,
+          file,
+          mediaFormat
+        );
       }
     }
 
@@ -70,7 +78,7 @@ const ChatInput = () => {
               <FormItem>
                 <FormControl>
                   <div className="flex flex-row items-center">
-                    <MediaButton setFile={setFile} file={file} />
+                    <MediaButton setFile={setFile} file={file} setMediaFormat={setMediaFormat} />
                     <Input
                       type="text"
                       className="bg-[#F2E2CE] mx-2"

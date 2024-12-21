@@ -12,7 +12,7 @@ import { PlusIcon } from "lucide-react";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { useEffect } from "react";
 
-const MediaButton = ({ setFile, file }: any) => {
+const MediaButton = ({ setFile, file, setMediaFormat }: any) => {
   const { toast } = useToast();
 
   useEffect(() => {
@@ -38,8 +38,22 @@ const MediaButton = ({ setFile, file }: any) => {
           type="file"
           onChange={(e) => {
             if (e.target.files !== null) {
+              let fileExtension = e.target.files[0].name.split(".").pop();
+              const imageFormat =
+                fileExtension == "jpg" || fileExtension == "png";
+              const videoFormat = fileExtension == "mp4";
+
               if (e.target.files[0].size < 52428800) {
-                setFile(e.target.files[0]);
+                if (imageFormat || videoFormat) {
+                  setFile(e.target.files[0]);
+                  setMediaFormat(fileExtension);
+                } else {
+                  toast({
+                    title: "Error",
+                    description: "Only video or image format.",
+                    variant: "destructive",
+                  });
+                }
               } else {
                 toast({
                   title: "Error",

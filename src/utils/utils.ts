@@ -6,9 +6,10 @@ import {
   updateDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
+import { db, storage } from "../../firebaseConfig";
 import { UserData } from "@/interfaces/user";
 import { RoomData } from "@/interfaces/room";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const createChatId = (currentUser: UserData, clickedUser: UserData) => {
   let chatUsers = [];
@@ -23,16 +24,30 @@ const sendMessageToRoom = async (
   currentUser: UserData,
   clickedUser: UserData,
   message: string,
+  file: File | null,
+  mediaFormat: "jpg" | "png" |"mp4" | null,
 ) => {
   const chatId = createChatId(currentUser, clickedUser);
 
   const chatRef = doc(db, "chats", chatId);
   const chatSnapshot = await getDoc(chatRef);
+  let mediaName;
+
+  if (file !== null) {
+    mediaName = file.name;
+    const mediaRef = ref(storage, `${mediaName}`);
+    await uploadBytes(mediaRef, file);
+  } else {
+    mediaName = null;
+  }
+
   const messageObj = {
     senderId: currentUser.uid,
     senderName: currentUser.userName,
     timeStamp: new Date(),
     content: message,
+    mediaName: mediaName,
+    mediaFormat: mediaFormat,
   };
 
   if (!chatSnapshot.exists()) {
@@ -45,16 +60,31 @@ const sendMessageToGroupRoom = async (
   currentUser: UserData,
   clickedRoom: RoomData,
   message: string,
+  file: File | null,
+  mediaFormat: "jpg" | "png" |"mp4" | null,
 ) => {
   const chatRef = doc(db, "groupChats", `${clickedRoom.roomId}`);
   const chatSnapshot = await getDoc(chatRef);
+
+  let mediaName;
+
+  if (file !== null) {
+    mediaName = file.name;
+    const mediaRef = ref(storage, `${mediaName}`);
+    await uploadBytes(mediaRef, file);
+  } else {
+    mediaName = null;
+  }
+
   const messageObj = {
     senderId: currentUser.uid,
     senderName: currentUser.userName,
     timeStamp: new Date(),
     content: message,
+    mediaName: mediaName,
+    mediaFormat: mediaFormat,
   };
-  
+
   if (!chatSnapshot.exists()) {
     await setDoc(chatRef, { messages: arrayUnion(messageObj) });
   } else {
@@ -102,4 +132,22 @@ const getChatRoomMessages = (
   });
 };
 
-export { sendMessageToRoom, getRoomMessages, getChatRoomMessages,sendMessageToGroupRoom };
+const getMedia = async (mediaName: string | null, setMedia: any, setLoading: any) => {
+  if (mediaName !== null) {
+    const mediaRef = ref(storage, `${mediaName}`);
+    const mediaUrl = await getDownloadURL(mediaRef);
+    setMedia(mediaUrl);
+    setLoading(false);
+  } else {
+    setMedia(null);
+    setLoading(false);
+  }
+};
+
+export {
+  sendMessageToRoom,
+  getRoomMessages,
+  getChatRoomMessages,
+  sendMessageToGroupRoom,
+  getMedia,
+};
