@@ -73,7 +73,7 @@ const SidebarHeader = () => {
         <User user={currentUser} />
       </div>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[#F2E2CE]">
           <DialogHeader>
             <DialogTitle>Update Profile</DialogTitle>
             <DialogDescription>
@@ -82,6 +82,7 @@ const SidebarHeader = () => {
           </DialogHeader>
           <div className="flex flex-row space-x-2">
             <Input
+              className="border-black"
               type="text"
               placeholder="New username..."
               onChange={(e) => setNewNickname(e.target.value)}
@@ -91,6 +92,7 @@ const SidebarHeader = () => {
           </div>
           <div className="flex flex-row space-x-2">
             <Input
+              className="border-black"
               type="url"
               placeholder="New profile img url..."
               onChange={(e) => setNewUrl(e.target.value)}
