@@ -61,6 +61,8 @@ const ChatInput = () => {
           mediaFormat,
           small_id,
         );
+
+        sendMessageToRoom(currentUser, clickedUser, normalizedMessage, file, mediaFormat);
       }
       if (currentChat === "groupChat") {
         sendMessageToGroupRoom(
@@ -70,6 +72,7 @@ const ChatInput = () => {
           file,
           mediaFormat,
           small_id,
+          mediaFormat
         );
       }
     }
@@ -94,6 +97,7 @@ const ChatInput = () => {
                       file={file}
                       setMediaFormat={setMediaFormat}
                     />
+                    <MediaButton setFile={setFile} file={file} setMediaFormat={setMediaFormat} />
                     <Input
                       type="text"
                       className="bg-[#F2E2CE] mx-2"
