@@ -7,4 +7,5 @@ export interface MessageData {
   timeStamp: Timestamp;
   mediaName: string | null;
   mediaFormat: "jpg" | "png" |"mp4" | null;
+  messageId: string;
 }

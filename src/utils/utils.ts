@@ -26,6 +26,7 @@ const sendMessageToRoom = async (
   message: string,
   file: File | null,
   mediaFormat: "jpg" | "png" |"mp4" | null,
+  messageId: string,
 ) => {
   const chatId = createChatId(currentUser, clickedUser);
 
@@ -48,6 +49,7 @@ const sendMessageToRoom = async (
     content: message,
     mediaName: mediaName,
     mediaFormat: mediaFormat,
+    messageId: messageId,
   };
 
   if (!chatSnapshot.exists()) {
@@ -62,6 +64,7 @@ const sendMessageToGroupRoom = async (
   message: string,
   file: File | null,
   mediaFormat: "jpg" | "png" |"mp4" | null,
+  messageId: string,
 ) => {
   const chatRef = doc(db, "groupChats", `${clickedRoom.roomId}`);
   const chatSnapshot = await getDoc(chatRef);
@@ -83,6 +86,7 @@ const sendMessageToGroupRoom = async (
     content: message,
     mediaName: mediaName,
     mediaFormat: mediaFormat,
+    messageId: messageId,
   };
 
   if (!chatSnapshot.exists()) {

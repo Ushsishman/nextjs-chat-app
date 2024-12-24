@@ -9,10 +9,11 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 
 const Message = ({ message }: { message: MessageData }) => {
-  const [media, setMedia] = useState<string | null>();
+  const [media, setMedia] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const { currentUser } = useAuth();
+
   const date = message.timeStamp.toDate();
   const shortTime = date.toLocaleTimeString(navigator.language, {
     hour: "2-digit",

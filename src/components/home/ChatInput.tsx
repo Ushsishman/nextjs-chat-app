@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import MediaButton from "./MediaButton";
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
 
 const ChatInput = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -36,6 +37,8 @@ const ChatInput = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const message = values.message;
+    const unique_id = uuid();
+    const small_id = unique_id.slice(0, 8);
 
     let trimmedMessage = message.trim();
 
@@ -50,7 +53,14 @@ const ChatInput = () => {
       let normalizedMessage = trimmedMessage.replace(/\s+/g, " ").trim();
 
       if (currentChat === "userChat") {
-        sendMessageToRoom(currentUser, clickedUser, normalizedMessage, file, mediaFormat);
+        sendMessageToRoom(
+          currentUser,
+          clickedUser,
+          normalizedMessage,
+          file,
+          mediaFormat,
+          small_id,
+        );
       }
       if (currentChat === "groupChat") {
         sendMessageToGroupRoom(
@@ -58,7 +68,8 @@ const ChatInput = () => {
           clickedRoom,
           normalizedMessage,
           file,
-          mediaFormat
+          mediaFormat,
+          small_id,
         );
       }
     }
@@ -78,7 +89,11 @@ const ChatInput = () => {
               <FormItem>
                 <FormControl>
                   <div className="flex flex-row items-center">
-                    <MediaButton setFile={setFile} file={file} setMediaFormat={setMediaFormat} />
+                    <MediaButton
+                      setFile={setFile}
+                      file={file}
+                      setMediaFormat={setMediaFormat}
+                    />
                     <Input
                       type="text"
                       className="bg-[#F2E2CE] mx-2"

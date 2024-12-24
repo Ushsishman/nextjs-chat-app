@@ -6,10 +6,12 @@ import User from "../User/User";
 import { Key } from "react";
 import { UserData } from "@/interfaces/user";
 import { useAuth } from "@/contexts/authContext";
+import { useResponsive } from "@/contexts/responsiveContext";
 
 const UsersTab = ({ inputText }: { inputText: string }) => {
   const { allUsers, setClickedUser, setCurrentChat } = useData();
   const { currentUser } = useAuth();
+  const { setOpenSidebar } = useResponsive();
 
   const searchBarArr = allUsers.filter((user: UserData) => {
     if (user.uid !== currentUser.uid) {
@@ -25,6 +27,7 @@ const UsersTab = ({ inputText }: { inputText: string }) => {
             onClick={() => {
               setCurrentChat("userChat");
               setClickedUser(user);
+              setOpenSidebar(false);
             }}>
             <User user={user} />
           </div>

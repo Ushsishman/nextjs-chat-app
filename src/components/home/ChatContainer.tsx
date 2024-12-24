@@ -23,10 +23,13 @@ import { useAuth } from "@/contexts/authContext";
 import { UserData } from "@/interfaces/user";
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuid } from "uuid";
+import { useResponsive } from "@/contexts/responsiveContext";
+import { FaArrowRight } from "react-icons/fa";
 
 const ChatContainer = () => {
   const { currentChat } = useData();
   const { currentUser } = useAuth();
+  const { openSidebar, setOpenSidebar } = useResponsive();
   const [roomName, setRoomName] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const { toast } = useToast();
@@ -70,7 +73,7 @@ const ChatContainer = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       {currentChat !== null ? (
         <div className="h-screen flex flex-col justify-between">
           <ChatHeader />
@@ -79,6 +82,14 @@ const ChatContainer = () => {
         </div>
       ) : (
         <div className="h-screen flex flex-col items-center justify-center space-y-3 text-lg">
+          {openSidebar === false && (
+            <Button
+              size="icon"
+              onClick={() => setOpenSidebar(true)}
+              className="absolute top-0 bottom-0 mx-0 my-auto left-2">
+              <FaArrowRight />
+            </Button>
+          )}
           <div className="absolute -z-10">
             <Image
               src={bgChat}
@@ -86,8 +97,12 @@ const ChatContainer = () => {
               className="opacity-20"
             />
           </div>
-          <h1 className="text-4xl font-bold">Welcome to ChatApp!</h1>
-          <p>Select a user to start chatting or search for someone new.</p>
+          <h1 className="text-4xl font-bold text-center">
+            Welcome to ChatApp!
+          </h1>
+          <p className="text-center">
+            Select a user to start chatting or search for someone new.
+          </p>
           <p>or</p>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger className="text-lg bg-[#D99559] hover:bg-[#F2B441] text-[#F2E2CE] py-2 px-4 rounded-full">

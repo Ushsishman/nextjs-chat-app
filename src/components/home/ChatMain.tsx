@@ -33,8 +33,8 @@ const ChatMain = () => {
             <p>Loading...</p>
           ) : (
             <div className="flex flex-col my-2">
-              {messages.map((message, index) => {
-                return <Message key={index} message={message} />;
+              {messages.map((message) => {
+                return <Message key={message.messageId} message={message} />;
               })}
             </div>
           )}
@@ -46,8 +46,8 @@ const ChatMain = () => {
             <p>Loading...</p>
           ) : (
             <div className="flex flex-col my-2">
-              {messages.map((message, index) => {
-                return <Message key={index} message={message} />;
+              {messages.map((message) => {
+                return <Message key={message.messageId} message={message} />;
               })}
             </div>
           )}

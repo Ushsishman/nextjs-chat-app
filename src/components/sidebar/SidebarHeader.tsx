@@ -18,6 +18,8 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { doc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { FaArrowLeft } from "react-icons/fa";
+import { useResponsive } from "@/contexts/responsiveContext";
 
 const SidebarHeader = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -26,6 +28,7 @@ const SidebarHeader = () => {
 
   const router = useRouter();
   const { currentUser, setRerender } = useAuth();
+  const { setOpenSidebar } = useResponsive();
   const { toast } = useToast();
   const userRef = doc(db, "users", currentUser.uid);
 
@@ -102,9 +105,15 @@ const SidebarHeader = () => {
           </div>
         </DialogContent>
       </Dialog>
-      <Button onClick={signOutUser}>
-        <LogOut />
-      </Button>
+      <div className="flex flex-row items-center space-x-2">
+        <Button onClick={signOutUser}>
+          <LogOut />
+        </Button>
+        <p>|</p>
+        <Button size="icon" onClick={() => setOpenSidebar(false)}>
+          <FaArrowLeft />
+        </Button>
+      </div>
     </div>
   );
 };

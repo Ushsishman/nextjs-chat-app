@@ -5,9 +5,11 @@ import { Separator } from "../ui/separator";
 import { RoomData } from "@/interfaces/room";
 import Room from "../Room/Room";
 import { useData } from "@/contexts/dataContext";
+import { useResponsive } from "@/contexts/responsiveContext";
 
 const RoomsTab = ({ inputText }: { inputText: string }) => {
   const { setClickedRoom, allChatGroups, setCurrentChat } = useData();
+  const { setOpenSidebar } = useResponsive();
 
   const searchBarArr = allChatGroups.filter((room: RoomData) => {
     return room.roomName?.toLowerCase().includes(inputText.toLowerCase());
@@ -22,6 +24,7 @@ const RoomsTab = ({ inputText }: { inputText: string }) => {
               onClick={() => {
                 setCurrentChat("groupChat");
                 setClickedRoom(room);
+                setOpenSidebar(false);
               }}>
               <Room room={room} />
             </div>
