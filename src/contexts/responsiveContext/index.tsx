@@ -9,7 +9,7 @@ const useResponsive = () => {
 };
 
 const ResponsiveProvider = ({ children }: { children: React.ReactNode }) => {
-  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
+  const [openSidebar, setOpenSidebar] = useState<boolean>(true);
 
   const value: any = { openSidebar, setOpenSidebar };
 

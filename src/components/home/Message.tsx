@@ -11,6 +11,9 @@ import ReactPlayer from "react-player";
 const Message = ({ message }: { message: MessageData }) => {
   const [media, setMedia] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [checkedSendername, setCheckedSendername] = useState<string>(
+    message.senderName,
+  );
 
   const { currentUser } = useAuth();
 
@@ -22,6 +25,15 @@ const Message = ({ message }: { message: MessageData }) => {
 
   useEffect(() => {
     getMedia(message.mediaName, setMedia, setLoading);
+  }, []);
+
+  useEffect(() => {
+    if (checkedSendername.length > 8) {
+      let shortenedName = checkedSendername.substring(0, 8) + "...";
+      setCheckedSendername(shortenedName);
+    } else {
+      setCheckedSendername(message.senderName);
+    }
   }, []);
 
   const imageFormat =
@@ -66,8 +78,8 @@ const Message = ({ message }: { message: MessageData }) => {
             ? "bg-[#D99559]"
             : "bg-[#735645]",
         )}>
-        <p className="text-lg">{message.senderName}:</p>
-        <p className="text-lg">{message.content}</p>
+        <p className="text-lg">{checkedSendername}:</p>
+        <p className="text-lg max-w-60 break-words">{message.content}</p>
         <p
           className={clsx(
             "text-xs",

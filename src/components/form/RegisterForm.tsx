@@ -30,7 +30,7 @@ const RegisterForm = () => {
       email: z
         .string()
         .min(1, { message: "This field has to be filled." })
-        .max(20)
+        .max(50)
         .email("This is not a valid email."),
       userName: z
         .string()
@@ -38,11 +38,11 @@ const RegisterForm = () => {
         .max(20),
       password: z
         .string()
-        .min(5, { message: "Password should be longer." })
+        .min(6, { message: "Password should be longer." })
         .max(20),
       confirmPassword: z
         .string()
-        .min(5, { message: "Password should be longer." }),
+        .min(6, { message: "Password should be longer." }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",

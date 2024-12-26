@@ -25,9 +25,10 @@ import { useToast } from "@/hooks/use-toast";
 import { v4 as uuid } from "uuid";
 import { useResponsive } from "@/contexts/responsiveContext";
 import { FaArrowRight } from "react-icons/fa";
+import { RoomData } from "@/interfaces/room";
 
 const ChatContainer = () => {
-  const { currentChat } = useData();
+  const { currentChat, setCurrentChat, setClickedRoom } = useData();
   const { currentUser } = useAuth();
   const { openSidebar, setOpenSidebar } = useResponsive();
   const [roomName, setRoomName] = useState<string>("");
@@ -46,16 +47,18 @@ const ChatContainer = () => {
       uid: currentUser.uid,
     };
 
+    const roomObj: RoomData = {
+      roomName: roomName,
+      messages: [],
+      members: [],
+      adminId: currentUser.uid,
+      roomId: small_id,
+    };
+
     const roomSnapshot = await getDoc(roomRef);
 
     if (!roomSnapshot.exists()) {
-      await setDoc(roomRef, {
-        roomName: roomName,
-        messages: [],
-        members: [],
-        adminId: currentUser.uid,
-        roomId: small_id,
-      })
+      await setDoc(roomRef, roomObj)
         .then(async () => {
           await updateDoc(roomRef, {
             members: arrayUnion(adminObj),
@@ -68,6 +71,9 @@ const ChatContainer = () => {
             variant: "default",
           });
           setDialogOpen(false);
+          setOpenSidebar(false);
+          setCurrentChat("groupChat");
+          setClickedRoom(roomObj);
         });
     }
   };
