@@ -8,4 +8,6 @@ export interface MessageData {
   mediaName: string | null;
   mediaFormat: "jpg" | "png" |"mp4" | null;
   messageId: string;
+  readBy?: string[];
+  roomId: string;
 }

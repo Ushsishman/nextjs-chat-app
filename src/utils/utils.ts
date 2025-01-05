@@ -25,7 +25,7 @@ const sendMessageToRoom = async (
   clickedUser: UserData,
   message: string,
   file: File | null,
-  mediaFormat: "jpg" | "png" |"mp4" | null,
+  mediaFormat: "jpg" | "png" | "mp4" | null,
   messageId: string,
 ) => {
   const chatId = createChatId(currentUser, clickedUser);
@@ -50,6 +50,7 @@ const sendMessageToRoom = async (
     mediaName: mediaName,
     mediaFormat: mediaFormat,
     messageId: messageId,
+    roomId: chatId,
   };
 
   if (!chatSnapshot.exists()) {
@@ -63,7 +64,7 @@ const sendMessageToGroupRoom = async (
   clickedRoom: RoomData,
   message: string,
   file: File | null,
-  mediaFormat: "jpg" | "png" |"mp4" | null,
+  mediaFormat: "jpg" | "png" | "mp4" | null,
   messageId: string,
 ) => {
   const chatRef = doc(db, "groupChats", `${clickedRoom.roomId}`);
@@ -87,6 +88,7 @@ const sendMessageToGroupRoom = async (
     mediaName: mediaName,
     mediaFormat: mediaFormat,
     messageId: messageId,
+    roomId: clickedRoom.roomId,
   };
 
   if (!chatSnapshot.exists()) {
@@ -148,10 +150,25 @@ const getMedia = async (mediaName: string | null, setMedia: any, setLoading: any
   }
 };
 
+const checkGroupMember = async (clickedRoom: RoomData, currentUser: UserData) => {
+  const currentRoomRef = doc(db, "groupChats", `${clickedRoom.roomId}`);
+  const currentRoomDoc = await getDoc(currentRoomRef);
+
+  if (currentRoomDoc.exists()) {
+    const members = currentRoomDoc.data().members;
+    const member = members.find((member: UserData) => member.uid === currentUser.uid);
+
+    if (!member) {
+      await updateDoc(currentRoomRef, { members: arrayUnion(currentUser) });
+    }
+  }
+};
+
 export {
   sendMessageToRoom,
   getRoomMessages,
   getChatRoomMessages,
   sendMessageToGroupRoom,
   getMedia,
+  checkGroupMember,
 };
