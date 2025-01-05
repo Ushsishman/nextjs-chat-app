@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useData } from "@/contexts/dataContext";
 import { useAuth } from "@/contexts/authContext";
-import { sendMessageToRoom, sendMessageToGroupRoom } from "@/utils/utils";
+import { sendMessageToRoom, sendMessageToGroupRoom, checkGroupMember } from "@/utils/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -63,6 +63,7 @@ const ChatInput = () => {
         );
       }
       if (currentChat === "groupChat") {
+        checkGroupMember(clickedRoom, currentUser);
         sendMessageToGroupRoom(
           currentUser,
           clickedRoom,
@@ -71,6 +72,7 @@ const ChatInput = () => {
           mediaFormat,
           small_id,
         );
+
       }
     }
 
