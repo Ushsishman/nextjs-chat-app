@@ -49,7 +49,7 @@ A modern, real-time chat application built with Next.js, Firebase, and TypeScrip
 
 1. Clone the repository
 ```bash
-git clone [repository-url]
+git clone https://github.com/Ushsishman/nextjs-chat-app
 ```
 
 2. Install dependencies
